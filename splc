@@ -1,0 +1,44 @@
+from Bio import SeqIO
+cod = {
+    'TTT': 'F',     'CTT': 'L',     'ATT': 'I',     'GTT': 'V',
+    'TTC': 'F',     'CTC': 'L',     'ATC': 'I',     'GTC': 'V',
+    'TTA': 'L',     'CTA': 'L',     'ATA': 'I',     'GTA': 'V',
+    'TTG': 'L',     'CTG': 'L',     'ATG': 'M',     'GTG': 'V',
+    'TCT': 'S',     'CCT': 'P',     'ACT': 'T',     'GCT': 'A',
+    'TCC': 'S',     'CCC': 'P',     'ACC': 'T',     'GCC': 'A',
+    'TCA': 'S',     'CCA': 'P',     'ACA': 'T',     'GCA': 'A',
+    'TCG': 'S',     'CCG': 'P',     'ACG': 'T',     'GCG': 'A',
+    'TAT': 'Y',     'CAT': 'H',     'AAT': 'N',     'GAT': 'D',
+    'TAC': 'Y',     'CAC': 'H',     'AAC': 'N',     'GAC': 'D',
+    'TAA': 'stop',  'CAA': 'Q',     'AAA': 'K',     'GAA': 'E',
+    'TAG': 'stop',  'CAG': 'Q',     'AAG': 'K',     'GAG': 'E',
+    'TGT': 'C',     'CGT': 'R',     'AGT': 'S',     'GGT': 'G',
+    'TGC': 'C',     'CGC': 'R',     'AGC': 'S',     'GGC': 'G',
+    'TGA': 'stop',  'CGA': 'R',     'AGA': 'R',     'GGA': 'G',
+    'TGG': 'W',     'CGG': 'R',     'AGG': 'R',     'GGG': 'G'
+}
+
+def RNA_splicing(dna_string, introns):
+    for intron in introns:
+        dna_string = dna_string.replace(intron, "")
+    protein_string  = ""
+    for i in range(0, len(dna_string)-2, 3):
+        if cod[dna_string[i:i+3]] == "end":
+            break
+        protein_string += cod[dna_string[i:i+3]]
+    return protein_string
+
+
+if __name__ == "__main__":
+   
+    seq_name, seq_string = [], []
+    with open ("C:\\Users\\ngeli\\Desktop\\Rosalind\\splc.txt",'r') as fa:
+        for seq_record  in SeqIO.parse(fa,'fasta'):
+            seq_name.append(seq_record.name)
+            seq_string.append(seq_record.seq)
+    
+    dna_string, introns = seq_string[0], seq_string[1:]
+    rna_string = RNA_splicing(dna_string, introns)
+    #print(rna_string)
+    final_string= rna_string[:-4]
+    print(final_string)
