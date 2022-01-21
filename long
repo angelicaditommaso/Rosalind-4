@@ -1,0 +1,54 @@
+from Bio import SeqIO
+
+def overlapping_strings(s1, s2):
+    strings = []
+    overlap_strings = []
+    for i in range(len(s1)):
+        if s1[i:] == s2[:len(s1)-i]:
+            overlap_strings.append(s1[i:])
+            strings.append(s1+s2[len(s1)-i:])
+            break
+    for i in range(len(s2)):
+        if s2[i:] == s1[:len(s2)-i]:
+            overlap_strings.append(s2[i:])
+            strings.append(s2+s1[len(s2)-i:])
+            break
+    if not overlap_strings:
+        return "", ""
+
+    string = min(strings, key=len)
+    overlap_string = max(overlap_strings, key=len)
+    return string, overlap_string
+
+def find_superstring(strings):
+    s = strings
+
+    while len(s) > 1:
+        over_string = ""
+        over_string_pair = []
+        over_string_length = 0
+
+        for i in range(len(s)-1):
+            for j in range(i+1, len(s)):
+                string, overlap_string = overlapping_strings(s[i], s[j])
+                if len(overlap_string) > over_string_length:
+                    over_string = string
+                    over_string_pair = [s[i], s[j]]
+                    over_string_length = len(overlap_string)
+
+        s.remove(over_string_pair[0])
+        s.remove(over_string_pair[1])
+        s.append(over_string)
+        
+    return s 
+
+if __name__ == "__main__":
+   
+    seq_name, seq_string = [], []
+    with open ("C:\\Users\\ngeli\\Desktop\\Rosalind\\long.txt",'r') as fa:
+        for seq_record  in SeqIO.parse(fa,'fasta'):
+            seq_name.append(str(seq_record.name))
+            seq_string.append(str(seq_record.seq))
+            
+    shortest_superstring = find_superstring(seq_string)
+    print(''.join(shortest_superstring))
